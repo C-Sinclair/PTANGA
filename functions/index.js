@@ -30,4 +30,15 @@ app.get('/', (request, response) => {
     })
 })
 
+app.get('/articles.json', (request, response) => {
+    response.set('Cache-Control', 'public, max-age=300, s-maxage=600') // for caching on nearest content delivery network node
+    getArticles().then(articles => {
+        response.json(articles)
+        return console.log(articles)
+    }).catch(e => {
+        console.log(e)
+        response.sendStatus(404)
+    })
+})
+
 exports.app = functions.https.onRequest(app)
