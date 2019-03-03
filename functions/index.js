@@ -23,6 +23,10 @@ app.get('/', (request, response) => {
         response.render('index', {
             articles
         })
+        return console.log(articles)
+    }).catch(e => {
+        console.log(e)
+        response.sendStatus(404)
     })
 })
 
