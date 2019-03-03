@@ -7,8 +7,9 @@ const firebaseApp = firebase.initializeApp(
     functions.config().firebase
 )
 
+const ref = firebaseApp.database().ref().child('articles')
+
 function getArticles() {
-    const ref = firebaseApp.database().ref('articles')
     return ref.once('value').then(snap => snap.val())
 }
 
@@ -42,3 +43,22 @@ app.get('/articles.json', (request, response) => {
 })
 
 exports.app = functions.https.onRequest(app)
+
+const ul = document.querySelector('ul#articles')
+
+ref.on('child_added', snap => {
+    const li = document.createElement('li')
+    li.innerText = snap.val()
+    li.id = snap.key()
+    ul.appendChild(li)
+})
+
+ref.on('child_changed', snap => {
+    const li = document.getElementById(snap.key())
+    li.innerText = snap.val()
+})
+
+ref.on('child_removed', snap => {
+    const li = document.getElementById(snap.key())
+    ul.removeChild(li)
+})
